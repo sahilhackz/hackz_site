@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAHIL HACKZ</title>
+  <style>
+    body {
+      background: black;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 0;
+      text-shadow: 0 0 10px #00ff00;
+    }
+    header {
+      text-align: center;
+      font-size: 3em;
+      padding: 20px;
+    }
+    nav {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+    }
+    nav a {
+      color: #00ff00;
+      text-decoration: none;
+    }
+    .video-list {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .video-card {
+      background: #111;
+      padding: 20px;
+      margin: 10px;
+      width: 90%;
+      border: 1px solid #00ff00;
+      border-radius: 10px;
+    }
+    .video-card iframe {
+      width: 100%;
+      height: 200px;
+    }
+    .visit-btn {
+      background: #00ff00;
+      color: black;
+      padding: 10px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header><span style="color: #00ff00;">SAHIL</span> <span style="color: white;">HACKZ</span></header>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Tools</a>
+    <a href="#">Contact</a>
+  </nav>
+  <div class="video-list" id="video-list"></div>
+  <script>
+    async function fetchVideos() {
+      const res = await fetch("https://api.jsonbin.io/v3/b/6834bca48a456b7966a5ab58/latest", {
+        headers: {
+          "X-Master-Key": "$2a$10$1rieU4zOzfdBEV1Od.ulAutSiF.VeSHq6M8NvZYNdffMP7r/WJ/he"
+        }
+      });
+      const data = await res.json();
+      const videos = data.record;
+      const container = document.getElementById("video-list");
+      container.innerHTML = "";
+      videos.forEach(video => {
+        const card = document.createElement("div");
+        card.className = "video-card";
+        card.innerHTML = `
+          <iframe src="https://www.youtube.com/embed/${getYouTubeID(video.youtubeLink)}" frameborder="0" allowfullscreen></iframe>
+          <h3>${video.title}</h3>
+          <p>${video.description}</p>
+          <a class="visit-btn" href="${video.downloadLink}" target="_blank">Visit Website</a>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function getYouTubeID(url) {
+      const regExp = /^.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return match && match[1].length == 11 ? match[1] : null;
+    }
+
+    fetchVideos();
+  </script>
+</body>
+</html>

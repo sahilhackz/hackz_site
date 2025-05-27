@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - SAHIL HACKZ</title>
+  <style>
+    body {
+      background: black;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 0 10px #00ff00;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, textarea, button {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+    input, textarea {
+      background: #111;
+      color: #00ff00;
+    }
+    button {
+      background: #00ff00;
+      color: black;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel</h1>
+  <form id="uploadForm">
+    <input type="text" id="title" placeholder="Video Title" required />
+    <textarea id="description" placeholder="Description"></textarea>
+    <input type="text" id="youtubeLink" placeholder="YouTube Video Link" required />
+    <input type="text" id="downloadLink" placeholder="Visit Website Link (e.g. Mediafire)" required />
+    <button type="submit">Upload</button>
+  </form>
+  <script>
+    const binId = "6834bca48a456b7966a5ab58";
+    const apiKey = "$2a$10$k46iEoLM5zoZHvFRFDCxtexZig9yx5cfC48YZL1wjsw8sWsjidcOS";
+    const masterKey = "$2a$10$1rieU4zOzfdBEV1Od.ulAutSiF.VeSHq6M8NvZYNdffMP7r/WJ/he";
+
+    document.getElementById("uploadForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const video = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("description").value,
+        youtubeLink: document.getElementById("youtubeLink").value,
+        downloadLink: document.getElementById("downloadLink").value
+      };
+
+      const existing = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+        headers: { "X-Master-Key": masterKey }
+      }).then(res => res.json());
+
+      existing.record.push(video);
+
+      await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Master-Key": masterKey,
+          "X-Access-Key": apiKey
+        },
+        body: JSON.stringify(existing.record)
+      });
+
+      alert("Video Uploaded!");
+      this.reset();
+    });
+  </script>
+</body>
+</html>
